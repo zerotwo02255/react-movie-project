@@ -2,7 +2,8 @@ import React, { useEffect,useState } from "react";
 import Search from "./components/Search";
 import Spinner from "./components/spinner";
 import MovieCard from "./components/MovieCard";
-import {useDebounce} from react-use;
+import {useDebounce} from "react-use";
+import {updateSearchMetrics} from "./appwrite.js"
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -56,7 +57,14 @@ const App = () => {
           return;
         }
         console.log(import.meta.env.VITE_TMDB_API_KEY);
-        setMovielist(data.results);
+        setMovielist(data.results || []);
+
+        if(query && data.results.length > 0){
+          await updateSearchMetrics(query,data.results[0]);
+        }
+       // Call the function to update search metrics
+
+
       } 
       
       catch (error) {
